@@ -53,6 +53,7 @@ def add_line_numbers(content):
 
 
 def print_path(writer, path, content, cxml, markdown, line_numbers):
+    path = path.replace("\\", "/")
     if cxml:
         print_as_xml(writer, path, content, line_numbers)
     elif markdown:
@@ -116,7 +117,7 @@ def process_path(
             with open(path, "r", encoding="utf-8") as f:
                 print_path(writer, path, f.read(), claude_xml, markdown, line_numbers)
         except UnicodeDecodeError:
-            warning_message = f"Warning: Skipping file {path} due to UnicodeDecodeError"
+            warning_message = f"Warning: Skipping file {path.replace(chr(92), '/')} due to UnicodeDecodeError"
             click.echo(click.style(warning_message, fg="red"), err=True)
     elif os.path.isdir(path):
         for root, dirs, files in os.walk(path):
@@ -167,7 +168,7 @@ def process_path(
                         )
                 except UnicodeDecodeError:
                     warning_message = (
-                        f"Warning: Skipping file {file_path} due to UnicodeDecodeError"
+                        f"Warning: Skipping file {file_path.replace(chr(92), '/')} due to UnicodeDecodeError"
                     )
                     click.echo(click.style(warning_message, fg="red"), err=True)
 
