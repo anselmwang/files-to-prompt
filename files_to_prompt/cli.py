@@ -36,7 +36,7 @@ def should_ignore(path, gitignore_rules):
 def read_gitignore(path):
     gitignore_path = os.path.join(path, ".gitignore")
     if os.path.isfile(gitignore_path):
-        with open(gitignore_path, "r") as f:
+        with open(gitignore_path, "r", encoding="utf-8") as f:
             return [
                 line.strip() for line in f if line.strip() and not line.startswith("#")
             ]
@@ -113,7 +113,7 @@ def process_path(
 ):
     if os.path.isfile(path):
         try:
-            with open(path, "r") as f:
+            with open(path, "r", encoding="utf-8") as f:
                 print_path(writer, path, f.read(), claude_xml, markdown, line_numbers)
         except UnicodeDecodeError:
             warning_message = f"Warning: Skipping file {path} due to UnicodeDecodeError"
@@ -156,7 +156,7 @@ def process_path(
             for file in sorted(files):
                 file_path = os.path.join(root, file)
                 try:
-                    with open(file_path, "r") as f:
+                    with open(file_path, "r", encoding="utf-8") as f:
                         print_path(
                             writer,
                             file_path,
@@ -301,6 +301,11 @@ def cli(
 
     # Combine paths from arguments and stdin
     paths = [*paths, *stdin_paths]
+
+    if not paths:
+        ctx = click.get_current_context()
+        click.echo(ctx.get_help())
+        ctx.exit(0)
 
     gitignore_rules = []
     writer = click.echo
