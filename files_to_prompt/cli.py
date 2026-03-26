@@ -309,6 +309,9 @@ def cli(
         ctx.exit(0)
 
     gitignore_rules = []
+    # Use UTF-8 for stdout to avoid UnicodeEncodeError on Windows (cp1252)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     writer = click.echo
     fp = None
     if output_file:
